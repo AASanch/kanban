@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
 import { useBoard } from '@/hooks/useBoard'
 import { CardModal } from '@/components/CardModal'
 
@@ -36,14 +38,17 @@ export default function Page() {
   }
 
   return (
-    <div className="flex flex-col h-full bg-board-bg">
-      <header className="flex items-center px-6 py-4 border-b border-white/5 flex-shrink-0">
-        <h1 className="text-white font-bold text-xl tracking-tight">
-          <span className="text-accent-yellow">K</span>anban
-        </h1>
-      </header>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', bgcolor: 'background.default' }}>
+      <Box
+        component="header"
+        sx={{ px: 3, py: 1.75, borderBottom: '1px solid rgba(255,255,255,0.05)', flexShrink: 0, display: 'flex', alignItems: 'center' }}
+      >
+        <Typography variant="h6" sx={{ fontWeight: 700, color: 'common.white' }}>
+          <Box component="span" sx={{ color: 'warning.main' }}>K</Box>anban
+        </Typography>
+      </Box>
 
-      <main className="flex-1 overflow-hidden">
+      <Box component="main" sx={{ flex: 1, overflow: 'hidden' }}>
         <KanbanBoard
           board={board}
           onRenameColumn={renameColumn}
@@ -52,7 +57,7 @@ export default function Page() {
           onCardClick={openEditModal}
           onMoveCard={moveCard}
         />
-      </main>
+      </Box>
 
       {modal && (
         <CardModal
@@ -63,6 +68,6 @@ export default function Page() {
           onSubmit={handleModalSubmit}
         />
       )}
-    </div>
+    </Box>
   )
 }

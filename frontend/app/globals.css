@@ -1,15 +1,3 @@
-@import "tailwindcss";
-
-@theme {
-  --color-accent-yellow: #ecad0a;
-  --color-blue-primary: #209dd7;
-  --color-purple-secondary: #753991;
-  --color-dark-navy: #032147;
-  --color-gray-text: #888888;
-  --color-board-bg: #010f20;
-  --color-column-bg: #032147;
-}
-
 html,
 body {
   height: 100%;

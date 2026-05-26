@@ -1,6 +1,12 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
+import Button from '@mui/material/Button'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import TextField from '@mui/material/TextField'
 
 interface Props {
   title: string
@@ -13,11 +19,6 @@ interface Props {
 export function CardModal({ title, initialTitle = '', initialDetails = '', onClose, onSubmit }: Props) {
   const [cardTitle, setCardTitle] = useState(initialTitle)
   const [cardDetails, setCardDetails] = useState(initialDetails)
-  const inputRef = useRef<HTMLInputElement>(null)
-
-  useEffect(() => {
-    inputRef.current?.focus()
-  }, [])
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -36,60 +37,39 @@ export function CardModal({ title, initialTitle = '', initialDetails = '', onClo
   }
 
   return (
-    <div
-      className="fixed inset-0 bg-dark-navy/75 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-      onClick={onClose}
-    >
-      <div
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-md"
-        onClick={e => e.stopPropagation()}
-      >
-        <div className="px-6 pt-6 pb-2 border-b border-gray-100">
-          <h2 className="text-dark-navy font-semibold text-lg">{title}</h2>
-        </div>
-        <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-gray-text uppercase tracking-wider">
-              Title
-            </label>
-            <input
-              ref={inputRef}
-              value={cardTitle}
-              onChange={e => setCardTitle(e.target.value)}
-              placeholder="Card title"
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm text-dark-navy placeholder:text-gray-300 outline-none focus:border-blue-primary focus:ring-2 focus:ring-blue-primary/20 transition"
-            />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-gray-text uppercase tracking-wider">
-              Details
-            </label>
-            <textarea
-              value={cardDetails}
-              onChange={e => setCardDetails(e.target.value)}
-              placeholder="Add details..."
-              rows={4}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm text-dark-navy placeholder:text-gray-300 outline-none focus:border-blue-primary focus:ring-2 focus:ring-blue-primary/20 transition resize-none"
-            />
-          </div>
-          <div className="flex justify-end gap-3 pt-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 rounded-lg text-sm font-medium text-gray-text border border-gray-200 hover:border-gray-300 hover:text-dark-navy transition"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={!cardTitle.trim()}
-              className="px-5 py-2 rounded-lg text-sm font-semibold text-white bg-purple-secondary hover:bg-purple-secondary/90 disabled:opacity-40 disabled:cursor-not-allowed transition"
-            >
-              Save
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+    <Dialog open onClose={onClose} maxWidth="sm" fullWidth>
+      <DialogTitle sx={{ fontWeight: 600 }}>{title}</DialogTitle>
+      <form onSubmit={handleSubmit}>
+        <DialogContent sx={{ pt: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <TextField
+            autoFocus
+            label="Title"
+            placeholder="Card title"
+            value={cardTitle}
+            onChange={e => setCardTitle(e.target.value)}
+            fullWidth
+            variant="outlined"
+            size="small"
+          />
+          <TextField
+            label="Details"
+            placeholder="Add details..."
+            value={cardDetails}
+            onChange={e => setCardDetails(e.target.value)}
+            fullWidth
+            multiline
+            rows={4}
+            variant="outlined"
+            size="small"
+          />
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2.5 }}>
+          <Button onClick={onClose} color="inherit">Cancel</Button>
+          <Button type="submit" variant="contained" color="secondary" disabled={!cardTitle.trim()}>
+            Save
+          </Button>
+        </DialogActions>
+      </form>
+    </Dialog>
   )
 }

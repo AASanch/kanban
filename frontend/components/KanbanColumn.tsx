@@ -3,6 +3,11 @@
 import { useRef, useState } from 'react'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { useDroppable } from '@dnd-kit/core'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import InputBase from '@mui/material/InputBase'
+import Paper from '@mui/material/Paper'
+import Typography from '@mui/material/Typography'
 import type { Column } from '@/types'
 import { KanbanCard } from './KanbanCard'
 
@@ -40,34 +45,79 @@ export function KanbanColumn({ column, onRename, onAddCard, onDeleteCard, onCard
   }
 
   return (
-    <div className="flex flex-col w-72 flex-shrink-0 rounded-xl overflow-hidden bg-column-bg max-h-full">
-      <div className="px-4 pt-4 pb-3 border-b-2 border-accent-yellow flex items-center justify-between gap-2">
+    <Paper
+      elevation={2}
+      sx={{
+        width: 288,
+        flexShrink: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        maxHeight: '100%',
+        borderRadius: 2,
+        overflow: 'hidden',
+        bgcolor: 'background.paper',
+      }}
+    >
+      <Box
+        sx={{
+          px: 2,
+          pt: 2,
+          pb: 1.5,
+          borderBottom: '2px solid',
+          borderColor: 'warning.main',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
+        }}
+      >
         {editing ? (
-          <input
-            ref={inputRef}
+          <InputBase
+            inputRef={inputRef}
             value={editName}
             onChange={e => setEditName(e.target.value)}
             onBlur={commitRename}
             onKeyDown={onKeyDown}
-            className="flex-1 bg-transparent text-white font-semibold text-sm tracking-wide uppercase outline-none border-b border-accent-yellow/60 pb-0.5"
-            data-testid={`column-name-input-${column.id}`}
+            inputProps={{ 'data-testid': `column-name-input-${column.id}` }}
+            sx={{
+              flex: 1,
+              color: 'common.white',
+              fontWeight: 700,
+              fontSize: '0.75rem',
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              borderBottom: '1px solid',
+              borderColor: 'warning.light',
+            }}
           />
         ) : (
-          <span
-            className="flex-1 text-white font-semibold text-sm tracking-wide uppercase cursor-pointer select-none"
+          <Typography
+            variant="overline"
             onDoubleClick={startEditing}
             data-testid={`column-header-${column.id}`}
+            sx={{ flex: 1, cursor: 'pointer', color: 'common.white', lineHeight: 1.5, fontWeight: 700 }}
           >
             {column.name}
-          </span>
+          </Typography>
         )}
-        <span className="text-xs text-gray-text font-medium tabular-nums">{column.cards.length}</span>
-      </div>
+        <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600 }}>
+          {column.cards.length}
+        </Typography>
+      </Box>
 
-      <div
+      <Box
         ref={setNodeRef}
-        className={`flex-1 overflow-y-auto p-3 flex flex-col gap-2 min-h-16 transition-colors ${isOver ? 'bg-white/5' : ''}`}
         data-testid={`column-cards-${column.id}`}
+        sx={{
+          flex: 1,
+          overflowY: 'auto',
+          p: 1.5,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 1,
+          minHeight: 64,
+          bgcolor: isOver ? 'action.hover' : 'transparent',
+          transition: 'background-color 0.15s',
+        }}
       >
         <SortableContext items={column.cards.map(c => c.id)} strategy={verticalListSortingStrategy}>
           {column.cards.map(card => (
@@ -79,15 +129,30 @@ export function KanbanColumn({ column, onRename, onAddCard, onDeleteCard, onCard
             />
           ))}
         </SortableContext>
-      </div>
+      </Box>
 
-      <button
-        onClick={onAddCard}
-        className="mx-3 mb-3 py-2.5 rounded-lg text-xs font-medium text-gray-text border border-dashed border-gray-text/25 hover:border-accent-yellow hover:text-accent-yellow transition-colors"
-        data-testid={`add-card-${column.id}`}
-      >
-        + Add card
-      </button>
-    </div>
+      <Box sx={{ px: 1.5, pb: 1.5 }}>
+        <Button
+          fullWidth
+          variant="outlined"
+          onClick={onAddCard}
+          data-testid={`add-card-${column.id}`}
+          sx={{
+            borderStyle: 'dashed',
+            borderColor: 'rgba(255,255,255,0.15)',
+            color: 'text.secondary',
+            fontSize: '0.75rem',
+            '&:hover': {
+              borderStyle: 'dashed',
+              borderColor: 'warning.main',
+              color: 'warning.main',
+              bgcolor: 'transparent',
+            },
+          }}
+        >
+          + Add card
+        </Button>
+      </Box>
+    </Paper>
   )
 }

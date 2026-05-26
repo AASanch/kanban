@@ -2,10 +2,15 @@
 
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import type { Card } from '@/types'
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
+import IconButton from '@mui/material/IconButton'
+import Typography from '@mui/material/Typography'
+import CloseIcon from '@mui/icons-material/Close'
+import type { Card as CardType } from '@/types'
 
 interface Props {
-  card: Card
+  card: CardType
   onClick: () => void
   onDelete: () => void
 }
@@ -16,32 +21,58 @@ export function KanbanCard({ card, onClick, onDelete }: Props) {
   })
 
   return (
-    <div
+    <Card
       ref={setNodeRef}
-      style={{
-        transform: CSS.Transform.toString(transform),
-        transition,
-        opacity: isDragging ? 0.35 : 1,
-      }}
-      className="bg-white rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer relative group select-none border-l-2 border-transparent hover:border-blue-primary"
+      style={{ transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.35 : 1 }}
       onClick={onClick}
       data-testid={`card-${card.id}`}
+      elevation={2}
+      sx={{
+        bgcolor: '#ffffff',
+        cursor: 'pointer',
+        userSelect: 'none',
+        position: 'relative',
+        borderLeft: '2px solid transparent',
+        transition: 'box-shadow 0.15s, border-color 0.15s',
+        '&:hover': { borderLeftColor: 'primary.main', boxShadow: 6 },
+        '& .delete-btn': { opacity: 0 },
+        '&:hover .delete-btn': { opacity: 1 },
+      }}
       {...attributes}
       {...listeners}
     >
-      <h3 className="text-dark-navy font-semibold text-sm pr-5 leading-snug">{card.title}</h3>
-      {card.details && (
-        <p className="text-gray-text text-xs mt-1 line-clamp-2 leading-relaxed">{card.details}</p>
-      )}
-      <button
-        className="absolute top-2.5 right-2.5 opacity-0 group-hover:opacity-100 w-5 h-5 flex items-center justify-center rounded text-gray-text hover:text-red-400 hover:bg-red-50 transition-all text-base leading-none"
+      <CardContent sx={{ py: 1.5, px: 2, '&:last-child': { pb: 1.5 } }}>
+        <Typography variant="body2" sx={{ fontWeight: 600, color: '#032147', pr: 2.5, lineHeight: 1.4 }}>
+          {card.title}
+        </Typography>
+        {card.details && (
+          <Typography
+            variant="caption"
+            sx={{
+              color: '#888888',
+              mt: 0.5,
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+              lineHeight: 1.5,
+            }}
+          >
+            {card.details}
+          </Typography>
+        )}
+      </CardContent>
+      <IconButton
+        size="small"
+        className="delete-btn"
         onClick={e => { e.stopPropagation(); onDelete() }}
         onPointerDown={e => e.stopPropagation()}
         aria-label="Delete card"
         data-testid={`delete-card-${card.id}`}
+        sx={{ position: 'absolute', top: 4, right: 4, color: '#888888', '&:hover': { color: 'error.main', bgcolor: 'error.light' } }}
       >
-        ×
-      </button>
-    </div>
+        <CloseIcon sx={{ fontSize: 14 }} />
+      </IconButton>
+    </Card>
   )
 }

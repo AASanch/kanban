@@ -52,10 +52,9 @@ describe('CardModal', () => {
 
   it('calls onClose when overlay is clicked', () => {
     const onClose = jest.fn()
-    const { container } = render(
-      <CardModal title="Add Card" onClose={onClose} onSubmit={jest.fn()} />
-    )
-    fireEvent.click(container.firstChild!)
+    render(<CardModal title="Add Card" onClose={onClose} onSubmit={jest.fn()} />)
+    const backdrop = document.querySelector('.MuiBackdrop-root') as HTMLElement
+    fireEvent.click(backdrop)
     expect(onClose).toHaveBeenCalledTimes(1)
   })
 })

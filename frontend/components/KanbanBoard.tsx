@@ -10,7 +10,11 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
-import type { Board, Card } from '@/types'
+import Box from '@mui/material/Box'
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
+import Typography from '@mui/material/Typography'
+import type { Board, Card as CardType } from '@/types'
 import { KanbanColumn } from './KanbanColumn'
 
 interface Props {
@@ -23,7 +27,7 @@ interface Props {
 }
 
 export function KanbanBoard({ board, onRenameColumn, onAddCard, onDeleteCard, onCardClick, onMoveCard }: Props) {
-  const [activeCard, setActiveCard] = useState<Card | null>(null)
+  const [activeCard, setActiveCard] = useState<CardType | null>(null)
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
@@ -47,19 +51,16 @@ export function KanbanBoard({ board, onRenameColumn, onAddCard, onDeleteCard, on
     const overCard = board.columns.flatMap(c => c.cards).find(c => c.id === overId)
     if (overCard) {
       const toCol = board.columns.find(col => col.cards.some(c => c.id === overId))!
-      const toIndex = toCol.cards.findIndex(c => c.id === overId)
-      onMoveCard(activeId, fromCol.id, toCol.id, toIndex)
+      onMoveCard(activeId, fromCol.id, toCol.id, toCol.cards.findIndex(c => c.id === overId))
     } else {
       const toCol = board.columns.find(c => c.id === overId)
-      if (toCol) {
-        onMoveCard(activeId, fromCol.id, toCol.id, toCol.cards.length)
-      }
+      if (toCol) onMoveCard(activeId, fromCol.id, toCol.id, toCol.cards.length)
     }
   }
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="flex gap-5 p-6 overflow-x-auto h-full items-start">
+      <Box sx={{ display: 'flex', gap: 2.5, p: 3, overflowX: 'auto', height: '100%', alignItems: 'flex-start' }}>
         {board.columns.map(column => (
           <KanbanColumn
             key={column.id}
@@ -70,15 +71,21 @@ export function KanbanBoard({ board, onRenameColumn, onAddCard, onDeleteCard, on
             onCardClick={cardId => onCardClick(column.id, cardId)}
           />
         ))}
-      </div>
+      </Box>
       <DragOverlay>
         {activeCard && (
-          <div className="bg-white rounded-lg px-4 py-3 shadow-2xl border-l-2 border-blue-primary rotate-1 opacity-95 w-72">
-            <h3 className="text-dark-navy font-semibold text-sm leading-snug">{activeCard.title}</h3>
-            {activeCard.details && (
-              <p className="text-gray-text text-xs mt-1 line-clamp-2 leading-relaxed">{activeCard.details}</p>
-            )}
-          </div>
+          <Card elevation={8} sx={{ width: 288, bgcolor: '#ffffff', transform: 'rotate(1deg)' }}>
+            <CardContent sx={{ py: 1.5, px: 2, '&:last-child': { pb: 1.5 } }}>
+              <Typography variant="body2" sx={{ fontWeight: 600, color: '#032147' }}>
+                {activeCard.title}
+              </Typography>
+              {activeCard.details && (
+                <Typography variant="caption" sx={{ color: '#888888' }}>
+                  {activeCard.details}
+                </Typography>
+              )}
+            </CardContent>
+          </Card>
         )}
       </DragOverlay>
     </DndContext>
